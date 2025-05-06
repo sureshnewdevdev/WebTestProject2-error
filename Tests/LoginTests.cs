@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using OrangeHRMSAutomation.Pages;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
@@ -14,9 +15,13 @@ namespace OrangeHRMSAutomation.Tests
         [SetUp]
         public void Setup()
         {
-            new DriverManager().SetUpDriver(new ChromeConfig());
-            driver = new ChromeDriver();
-            driver.Manage().Window.Maximize();
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--window-size=1920,1080");
+
+            // Path to folder containing chromedriver.exe
+            driver = new ChromeDriver(@"C:\SeleniumDrivers\chromedriver-win64\chromedriver-win64\", chromeOptions);
+
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             driver.Navigate().GoToUrl("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
         }
 
@@ -25,6 +30,10 @@ namespace OrangeHRMSAutomation.Tests
         {
             var loginPage = new LoginPage(driver);
             loginPage.Login("Admin", "admin123");
+            //Assert.That(driver.Url.Contains("dashboard") || driver.PageSource.Contains("Dashboard"), Is.True);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait.Until(d => d.Url.Contains("dashboard") || d.PageSource.Contains("Dashboard"));
+
             Assert.That(driver.Url.Contains("dashboard") || driver.PageSource.Contains("Dashboard"), Is.True);
         }
 

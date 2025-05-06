@@ -14,10 +14,13 @@ namespace OrangeHRMSAutomation.Tests
         [SetUp]
        public void Setup()
 {
-    var chromeOptions = new ChromeOptions();
-            new DriverManager().SetUpDriver(new ChromeConfig(), "135.0.7049.116");
-            driver = new ChromeDriver();
-            driver.Manage().Window.Maximize();
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--window-size=1920,1080");
+
+            // Path to folder containing chromedriver.exe
+            driver = new ChromeDriver(@"C:\SeleniumDrivers\chromedriver-win64\chromedriver-win64\", chromeOptions);
+
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             driver.Navigate().GoToUrl("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
         }
 
